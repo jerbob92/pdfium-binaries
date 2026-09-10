@@ -26,20 +26,18 @@ case "$BUILD_TYPE" in
 esac
 
 apply_patch "$PATCHES/public_headers.patch"
-# Under upstream review (CL 155510). Uses spans and fxcrt::Zip() rather than
-# raw pointers, so it carries no UNSAFE_BUFFERS; drop it once the CL lands.
-# CL 155530 (compositor) landed upstream, so its patch is gone.
-apply_patch "$PATCHES/png_predictor_perf.patch"
+# CL 155510 (PngPredictLine) and CL 155530 (compositor) landed upstream, so
+# their patches are gone.
 # CL 155550's content landed upstream, so this patch now carries only the
 # not-yet-uploaded run-planning follow-up (branch stretch-bilinear-rows:
 # 1/2-tap column runs + tiny-work bail-out), re-derived on top of the typed
 # destination spans that CL 155970 landed afterwards.
 apply_patch "$PATCHES/stretch_engine_perf.patch"
 [ "$OS" != "emscripten" ] && apply_patch "$PATCHES/alpha_unroll_native.patch"
-# Decode 3-component JPEGs straight to BGR (branch jpeg-decode-bgr, not yet
-# uploaded). Portable; helps native and wasm. The wasm jpeg_simd kernels
-# already dispatch on JCS_EXT_BGR, so no wasm-side change is needed.
-apply_patch "$PATCHES/jpeg_decode_bgr.patch"
+# CL 156070 (BGR decode) and CL 156090 (the ICCBased/sRGB extension) landed
+# upstream, so their patch is gone. Note it is not in chromium/8050: builds
+# from that branch lose the optimization until a branch is cut from a main
+# that has it.
 apply_patch "$PATCHES/swap_translate_perf.patch"
 apply_patch "$PATCHES/lcms_translate_memo.patch"
 apply_patch "$PATCHES/t4_psfunc_memo.patch"
