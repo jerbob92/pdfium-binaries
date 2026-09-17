@@ -128,7 +128,7 @@ index 206b5c3ee..42b891150 100644
 +
 +weak_alias(freopen, freopen64);
 diff --git a/system/lib/standalone/standalone.c b/system/lib/standalone/standalone.c
-index 0aab88e7a..ee1cb39a0 100644
+index 0aab88e7a..b26f2a32f 100644
 --- a/system/lib/standalone/standalone.c
 +++ b/system/lib/standalone/standalone.c
 @@ -6,6 +6,7 @@
@@ -442,7 +442,7 @@ index 0aab88e7a..ee1cb39a0 100644
  weak int __syscall_poll(struct pollfd *fds, nfds_t nfds, int timeout) {
    return -ENOSYS;
  }
-@@ -98,48 +381,742 @@ weak int __syscall_epoll_pwait_nonblocking(int epfd, struct epoll_event *ev,
+@@ -98,48 +381,746 @@ weak int __syscall_epoll_pwait_nonblocking(int epfd, struct epoll_event *ev,
  // TODO: full file support for WASI, or an option for it
  // open()
  weak int __syscall_openat(int dirfd, const char *path, int flags, ...) {
@@ -482,18 +482,22 @@ index 0aab88e7a..ee1cb39a0 100644
 +    ~(__WASI_RIGHTS_FD_DATASYNC | __WASI_RIGHTS_FD_READ |
 +      __WASI_RIGHTS_FD_WRITE | __WASI_RIGHTS_FD_ALLOCATE |
 +      __WASI_RIGHTS_FD_READDIR | __WASI_RIGHTS_FD_FILESTAT_SET_SIZE);
++  // Note that musl defines O_RDONLY as 0, O_WRONLY as 1 and O_RDWR as 2,
++  // so unlike in wasi-libc the access mode can not be tested as bit flags.
 +  switch (flags & O_ACCMODE) {
 +    case O_RDONLY:
-+    case O_RDWR:
++      max |= __WASI_RIGHTS_FD_READ | __WASI_RIGHTS_FD_READDIR;
++      break;
 +    case O_WRONLY:
-+      if ((flags & O_RDONLY) != 0) {
-+        max |= __WASI_RIGHTS_FD_READ | __WASI_RIGHTS_FD_READDIR;
-+      }
-+      if ((flags & O_WRONLY) != 0) {
-+        max |= __WASI_RIGHTS_FD_DATASYNC | __WASI_RIGHTS_FD_WRITE |
-+               __WASI_RIGHTS_FD_ALLOCATE |
-+               __WASI_RIGHTS_FD_FILESTAT_SET_SIZE;
-+      }
++      max |= __WASI_RIGHTS_FD_DATASYNC | __WASI_RIGHTS_FD_WRITE |
++             __WASI_RIGHTS_FD_ALLOCATE |
++             __WASI_RIGHTS_FD_FILESTAT_SET_SIZE;
++      break;
++    case O_RDWR:
++      max |= __WASI_RIGHTS_FD_READ | __WASI_RIGHTS_FD_READDIR |
++             __WASI_RIGHTS_FD_DATASYNC | __WASI_RIGHTS_FD_WRITE |
++             __WASI_RIGHTS_FD_ALLOCATE |
++             __WASI_RIGHTS_FD_FILESTAT_SET_SIZE;
 +      break;
 +    case O_EXEC: // O_EXEC => O_PATH => 010000000
 +    //case O_SEARCH: O_SEARCH => O_PATH => 010000000, both are the same, so causes errors.
@@ -1200,7 +1204,7 @@ index 0aab88e7a..ee1cb39a0 100644
  }
  
  // Emscripten additions
-@@ -185,12 +1162,21 @@ weak double emscripten_date_now(void) {
+@@ -185,12 +1166,21 @@ weak double emscripten_date_now(void) {
    return clock_gettime_ms(CLOCK_REALTIME);
  }
  
@@ -1222,7 +1226,7 @@ index 0aab88e7a..ee1cb39a0 100644
    abort();
  }
  #endif
-@@ -293,6 +1279,21 @@ int _setitimer_js(int which, double timeout) {
+@@ -293,6 +1283,21 @@ int _setitimer_js(int which, double timeout) {
    return -1;
  }
  
@@ -1244,7 +1248,7 @@ index 0aab88e7a..ee1cb39a0 100644
  weak uintptr_t emscripten_stack_snapshot(void) {
    return 0;
  }
-@@ -337,6 +1338,252 @@ weak void _emscripten_get_progname(char* buf, int length) {
+@@ -337,6 +1342,252 @@ weak void _emscripten_get_progname(char* buf, int length) {
  
  weak void _emscripten_runtime_keepalive_clear() {}
  
