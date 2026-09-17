@@ -243,6 +243,20 @@ The following NuGet packages are available:
 **HELP WANTED!**  
 I can provide packages for your favorite package manager, but I need help from someone who knows the format. Contact me via [GitHub issues](https://github.com/bblanchon/pdfium-binaries/issues) if you want to help.
 
+### Static builds
+
+Our pre-compiled versions of PDFium include only shared/dynamic libraries (`.so`, `.dll`, `.dylib`...), and **we don't plan to add static builds** in the future.
+
+However, our repository comes with a convenience script to run a local build, and this script supports static builds through the `-s` flag. For example, for a Linux ARM64 build, run:
+
+```
+./build.sh -s linux arm64
+```
+
+This script reproduces the build steps used in our GitHub workflows, so it is only tested on operating systems used by GitHub-hosted runners (for example Ubuntu), and **we don't plan to make this script portable**.
+
+Alternatively, you can trigger the reusable workflow `build.yml` with `build_type=static` from your own workflow, or fork this repo and start the `build-one.yml` manually from the Actions tab.
+
 ## Documentation
 
 ### PDFium API documentation
@@ -316,6 +330,11 @@ The following projects use (or recommend using) our PDFium builds:
       <td><img src="https://github.com/jerbob92.png" width="48" height="48" alt="Jeroen Bobbeldijk"></td>
       <td><a href="https://github.com/jerbob92"><code>@jerbob92</code></a></td>
       <td>Musl and WebAssembly builds</td>
+    </tr>
+    <tr>
+      <td><img src="https://github.com/kateinoigakukun.png" width="48" height="48" alt="Yuta Saito"></td>
+      <td><a href="https://github.com/kateinoigakukun"><code>@kateinoigakukun</code></a></td>
+      <td>Static builds</td>
     </tr>
     <tr>
       <td><img src="https://github.com/mara004.png" width="48" height="48" alt="mara004"></td>
