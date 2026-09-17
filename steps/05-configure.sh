@@ -6,6 +6,9 @@ BUILD=${PDFium_BUILD_DIR:-$SOURCE/out}
 TARGET_CPU=${PDFium_TARGET_CPU:?}
 TARGET_ENVIRONMENT=${PDFium_TARGET_ENVIRONMENT:-}
 ENABLE_V8=${PDFium_ENABLE_V8:-false}
+# Experimental Brotli stream decoding (PDF 2.0 BrotliDecode filter); off by
+# default upstream too. Set PDFium_ENABLE_BROTLI=true for a test build.
+ENABLE_BROTLI=${PDFium_ENABLE_BROTLI:-false}
 IS_DEBUG=${PDFium_IS_DEBUG:-false}
 BUILD_TYPE=${PDFium_BUILD_TYPE:-shared}
 
@@ -26,6 +29,7 @@ mkdir -p "$BUILD"
   echo "target_os = \"$OS\""
   echo "pdf_enable_v8 = $ENABLE_V8"
   echo "pdf_enable_xfa = $ENABLE_V8"
+  echo "pdf_enable_brotli = $ENABLE_BROTLI"
   echo "treat_warnings_as_errors = false"
   echo "is_component_build = false"
 
